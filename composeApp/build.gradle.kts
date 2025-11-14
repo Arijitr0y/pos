@@ -1,6 +1,8 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+val supabaseVersion = "3.2.2"
+val ktorVersion = "3.2.2"
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -39,12 +41,16 @@ kotlin {
         browser()
         binaries.executable()
     }
-    
+
     sourceSets {
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
+
+            // Ktor engine for Android
+            implementation("io.ktor:ktor-client-okhttp:$ktorVersion")
         }
+
         commonMain.dependencies {
             implementation(compose.runtime)
             implementation(compose.foundation)
@@ -54,14 +60,58 @@ kotlin {
             implementation(compose.components.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
+
+            // 🔹 Supabase (no BOM, direct versions)
+            val supabaseVersion = "3.2.2" // or "3.2.6" if you prefer latest
+
+            implementation("io.github.jan-tennert.supabase:auth-kt:$supabaseVersion")
+            implementation("io.github.jan-tennert.supabase:postgrest-kt:$supabaseVersion")
+
+            // 🔹 Ktor core + JSON (keep your existing versions)
+            val ktorVersion = "3.2.2"
+            implementation("io.ktor:ktor-client-core:$ktorVersion")
+            implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
+            implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
         }
+
+
         commonTest.dependencies {
             implementation(libs.kotlin.test)
         }
+
         jvmMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutinesSwing)
+
+            // Ktor engine for Desktop/JVM
+            implementation("io.ktor:ktor-client-java:$ktorVersion")
         }
+
+        // 📱 iOS engines – use the concrete iOS source sets
+        val iosArm64Main by getting {
+            dependencies {
+                implementation("io.ktor:ktor-client-darwin:$ktorVersion")
+            }
+        }
+        val iosSimulatorArm64Main by getting {
+            dependencies {
+                implementation("io.ktor:ktor-client-darwin:$ktorVersion")
+            }
+        }
+
+        // 🌐 Web + Wasm engines
+        val jsMain by getting {
+            dependencies {
+                implementation("io.ktor:ktor-client-js:$ktorVersion")
+            }
+        }
+
+        val wasmJsMain by getting {
+            dependencies {
+                implementation("io.ktor:ktor-client-js:$ktorVersion")
+            }
+        }
+
     }
 }
 
@@ -101,7 +151,7 @@ compose.desktop {
         mainClass = "org.kitchen.pos.MainKt"
 
         nativeDistributions {
-            targetFormats(TargetFormat.Exe,TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
+            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "org.kitchen.pos"
             packageVersion = "1.0.0"
         }
