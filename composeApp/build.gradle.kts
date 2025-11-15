@@ -37,10 +37,10 @@ kotlin {
     }
     
     @OptIn(ExperimentalWasmDsl::class)
-    wasmJs {
-        browser()
-        binaries.executable()
-    }
+//    wasmJs {
+//        browser()
+//        binaries.executable()
+//    }
 
     sourceSets {
         androidMain.dependencies {
@@ -61,6 +61,15 @@ kotlin {
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
 
+            implementation("cafe.adriel.voyager:voyager-navigator:1.1.0-beta02")
+            implementation("cafe.adriel.voyager:voyager-transitions:1.1.0-beta02")
+            implementation("io.insert-koin:koin-core:3.5.6")
+            implementation("io.insert-koin:koin-compose:1.1.5")
+            implementation(compose.materialIconsExtended)
+
+
+            implementation(compose.materialIconsExtended)
+
             // 🔹 Supabase (no BOM, direct versions)
             val supabaseVersion = "3.2.2" // or "3.2.6" if you prefer latest
 
@@ -72,6 +81,17 @@ kotlin {
             implementation("io.ktor:ktor-client-core:$ktorVersion")
             implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
             implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
+
+            // Voyager (navigation)
+            implementation("cafe.adriel.voyager:voyager-navigator:1.1.0-beta02")
+            implementation("cafe.adriel.voyager:voyager-transitions:1.1.0-beta02")
+            implementation("cafe.adriel.voyager:voyager-screenmodel:1.1.0-beta02") // optional; we’ll use our own VM but handy
+
+            // Koin (DI) – KMP
+            implementation("io.insert-koin:koin-core:3.5.6")
+            implementation("io.insert-koin:koin-compose:1.1.5") // Compose integration (works on MPP)
+
+
         }
 
 
@@ -106,11 +126,11 @@ kotlin {
             }
         }
 
-        val wasmJsMain by getting {
-            dependencies {
-                implementation("io.ktor:ktor-client-js:$ktorVersion")
-            }
-        }
+//        val wasmJsMain by getting {
+//            dependencies {
+//                implementation("io.ktor:ktor-client-js:$ktorVersion")
+//            }
+//        }
 
     }
 }

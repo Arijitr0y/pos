@@ -3,23 +3,33 @@ package org.kitchen.pos
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.Preview
+import org.kitchen.pos.app.AppNavigation
+import org.koin.core.context.GlobalContext
+import org.koin.core.context.startKoin
+import org.kitchen.pos.app.appModules   // <-- your Koin modules list
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
-        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
 
+        // Start Koin ONCE (guarded)
+        if (GlobalContext.getOrNull() == null) {
+            startKoin {
+                modules(appModules)
+            }
+        }
+
         setContent {
-            App()
+            MaterialTheme { // <-- use MaterialTheme instead of AppTheme
+                AppRoot()
+            }
         }
     }
 }
 
-@Preview
 @Composable
-fun AppAndroidPreview() {
-    App()
+private fun AppRoot() {
+    AppNavigation() // your root composable
 }
