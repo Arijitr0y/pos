@@ -32,12 +32,6 @@ fun InventoryScreen(
     val lowStocks = remember { items.filter { it.status != StockStatus.InStock } }
 
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Inventory") },
-                actions = { IconButton(onClick = {}) { Icon(Icons.Default.MoreVert, null) } }
-            )
-        },
         floatingActionButton = {
             FloatingActionButton(onClick = onAddInventory) {
                 Icon(Icons.Default.Add, contentDescription = "Add")

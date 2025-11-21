@@ -3,6 +3,8 @@ import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 val supabaseVersion = "3.2.2"
 val ktorVersion = "3.2.2"
+val roomVersion = "2.8.3" // ⬅️ add this
+
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -10,9 +12,13 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.composeHotReload)
+
+    id("org.jetbrains.kotlin.kapt")
 }
 
+
 kotlin {
+
     androidTarget {
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_11)
@@ -49,9 +55,18 @@ kotlin {
 
             // Ktor engine for Android
             implementation("io.ktor:ktor-client-okhttp:$ktorVersion")
+
+            // ✅ Android-only coroutines
+            implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1")
+
+            // ✅ Room (Android-only)
+// ✅ Room (Android-only)
+            implementation("androidx.room:room-runtime:${roomVersion}")
+            implementation("androidx.room:room-ktx:${roomVersion}")
         }
 
         commonMain.dependencies {
+
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.material3)
@@ -91,7 +106,7 @@ kotlin {
             implementation("io.insert-koin:koin-core:3.5.6")
             implementation("io.insert-koin:koin-compose:1.1.5") // Compose integration (works on MPP)
 
-
+    
         }
 
 
@@ -164,7 +179,14 @@ android {
 
 dependencies {
     debugImplementation(compose.uiTooling)
+
+    // ✅ Room annotation processor for Android (kapt configuration)
+
+    add("kapt", "androidx.room:room-compiler:$roomVersion")
+
 }
+
+
 
 compose.desktop {
     application {
